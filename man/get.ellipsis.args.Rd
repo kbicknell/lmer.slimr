@@ -1,0 +1,16 @@
+\name{get.ellipsis.args}
+\alias{get.ellipsis.args}
+\title{Takes the formal arguments and the matched call to a function and provides a
+list containing the subset of the matched call that corresponds to the
+ellipsis. If nothings corresponds to the ellipsis, the list will be empty}
+\usage{
+  get.ellipsis.args(formals, matched.call)
+}
+\description{
+  Takes the formal arguments and the matched call to a
+  function and provides a list containing the subset of the
+  matched call that corresponds to the ellipsis. If
+  nothings corresponds to the ellipsis, the list will be
+  empty
+}
+

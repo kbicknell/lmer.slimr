@@ -1,12 +1,40 @@
 library(parallel)
 library(lme4)
 
-#' Evaluate sequence of (g)lmer models with a decreasing number of random
+#' Evaluate sequence of lmer models with a decreasing number of random
 #' correlations and return the first one to converge.
 #'
 #' @export
-lmer.slimr <- function(formula, data, family,
+lmer.slimr <- function(formula, data,
                        parallel=1, show.warnings=F, ...) {
+  matched.call <- match.call()
+  env <- parent.frame()
+  if ("family" %in% names(matched.call)) {
+    stop("lmer.slimr is only for linear models, but 'family' is specified. ",
+         "Use glmer.slimr instead.")
+  }
+  matched.call[[1]] <- quote(lmer.slimr.core)
+  eval(matched.call, env)
+}
+
+#' Evaluate sequence of glmer models with a decreasing number of random
+#' correlations and return the first one to converge.
+#'
+#' @export
+glmer.slimr <- function(formula, data, family,
+                        parallel=1, show.warnings=F, ...) {
+  if (missing(family)) {
+    stop("glmer.slimr requires that 'family' be specified. ",
+         "Use lmer.slimr for linear models.")
+  }
+  matched.call <- match.call()
+  env <- parent.frame()
+  matched.call[[1]] <- quote(lmer.slimr.core)
+  eval(matched.call, env)
+}
+
+lmer.slimr.core <- function(formula, data, family="gaussian",
+                            parallel=1, show.warnings=F, ...) {
   matched.call <- match.call() # acrobatics to recover ..., names of data, etc.
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)

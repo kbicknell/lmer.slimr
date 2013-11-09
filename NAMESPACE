@@ -1,2 +1,2 @@
+export(glmer.slimr)
 export(lmer.slimr)
-export(slmer)
