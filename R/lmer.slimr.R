@@ -49,17 +49,18 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
   next.to.start <- 1
   parallel <- min(parallel, num.steps)
 
+  ## this gets evaluated with repect to the parent.frame() environment, which
+  ## can't directly see functions not exported from the package, so we need to
+  ## use lmer.slimr:::
+  call.base <- list(quote(lmer.slimr:::lmer.check.convergence),
+                    formula=possible.steps[[1]],
+                    data=matched.call$data, family=family)
+  lcc.call <- as.call(c(call.base, ellipsis.args))
+
   ## initialize first batch of jobs
   jobs <- list()
   for (i in seq(parallel)) {
-    ## this gets evaluated with repect to the parent.frame() environment, which
-    ## can't directly see functions not exported from the package, so we need to
-    ## use lmer.slimr:::
-    call.base <- list(quote(lmer.slimr:::lmer.check.convergence),
-                      formula=possible.steps[[next.to.start]],
-                      data=matched.call$data, family=family)
-    lcc.call <- as.call(c(call.base, ellipsis.args))
-
+    lcc.call$formula <- possible.steps[[next.to.start]]
     jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
     next.to.start <- next.to.start + 1
   }
