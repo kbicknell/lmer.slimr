@@ -1,6 +1,3 @@
-library(parallel)
-library(lme4)
-
 #' Evaluate sequence of lmer models with a decreasing number of random
 #' correlations and return the first one to converge.
 #'
@@ -14,7 +11,7 @@ lmer.slimr <- function(formula, data,
     stop("lmer.slimr is only for linear models, but 'family' is specified. ",
          "Use glmer.slimr instead.")
   }
-  matched.call[[1]] <- quote(lmer.slimr.core)
+  matched.call[[1]] <- quote(lmer.slimr:::lmer.slimr.core)
   eval(matched.call, env)
 }
 
@@ -31,10 +28,12 @@ glmer.slimr <- function(formula, data, family,
   }
   matched.call <- match.call()
   env <- parent.frame()
-  matched.call[[1]] <- quote(lmer.slimr.core)
+  matched.call[[1]] <- quote(lmer.slimr:::lmer.slimr.core)
   eval(matched.call, env)
 }
 
+#' @importFrom parallel mcparallel mccollect
+#' @importFrom tools pskill
 lmer.slimr.core <- function(formula, data, family="gaussian",
                             parallel=getOption("mc.cores", 2L),
                             show.warnings=F, simplest.only=F, ...) {
@@ -61,13 +60,13 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
                       data=matched.call$data, family=family)
     lcc.call <- as.call(c(call.base, ellipsis.args))
 
-    jobs[[next.to.start]] <- mcparallel(eval(lcc.call, env))
+    jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
     next.to.start <- next.to.start + 1
   }
 
   ## iteratively look at results
   for (i in seq_len(num.steps)) {
-    result <- mccollect(jobs[[i]])[[1]]
+    result <- parallel::mccollect(jobs[[i]])[[1]]
     if (is.list(result)) { # returned warning or error
       if ("error" %in% class(result)) { # returned error
         stop(result)
@@ -77,14 +76,14 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
       }
       if (next.to.start <= num.steps) {
         lcc.call$formula <- possible.steps[[next.to.start]]
-        jobs[[next.to.start]] <- mcparallel(eval(lcc.call, env))
+        jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
         next.to.start <- next.to.start + 1
       }
     } else { # it converged
       output.convergence.info(i, possible.steps[[i]])
       if (next.to.start-1 > i) {
         for (j in seq(i+1, next.to.start-1)) {
-          parallel:::mckill(jobs[[j]], 15L) # 15 is code for SIGTERM
+          tools::pskill(jobs[[j]]$pid)
         }
       }
       return(result)

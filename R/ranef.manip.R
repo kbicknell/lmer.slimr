@@ -40,6 +40,7 @@ can.reparam <- function(term, df) {
   return(F)
 }
 
+#' @importFrom lme4 nobars findbars
 drop.corr.from.lmer.formula <- function(f, df) {
   ## drops a single row out of the correlation matrix of a mixed-effects
   ## regression model formula

@@ -3,8 +3,9 @@
 \title{Evaluate sequence of glmer models with a decreasing number of random
 correlations and return the first one to converge.}
 \usage{
-  glmer.slimr(formula, data, family, parallel = 1,
-    show.warnings = F, ...)
+  glmer.slimr(formula, data, family,
+    parallel = getOption("mc.cores", 2L),
+    show.warnings = F, simplest.only = F, ...)
 }
 \description{
   Evaluate sequence of glmer models with a decreasing

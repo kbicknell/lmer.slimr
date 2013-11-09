@@ -1,4 +1,6 @@
 #' Returns a (g)lmer model if it converges, and a warning or error otherwise
+#'
+#' @importFrom lme4 lmer glmer
 lmer.check.convergence <- function(formula, data, family="gaussian", ...) {
   ## We have to do acrobatics to see the evaluated ... in the model output
   matched.call <- match.call()
@@ -6,11 +8,11 @@ lmer.check.convergence <- function(formula, data, family="gaussian", ...) {
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
 
   if (family == "gaussian") {
-    call.base <- list(quote(lmer),
+    call.base <- list(quote(lme4::lmer),
                       formula=matched.call$formula,
                       data=matched.call$data)
   } else {
-    call.base <- list(quote(glmer),
+    call.base <- list(quote(lme4::glmer),
                       formula=matched.call$formula,
                       data=matched.call$data,
                       family=family)

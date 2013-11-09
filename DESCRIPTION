@@ -11,11 +11,12 @@ Description: Often (g)lmer models (from the lme4 package) with a large number of
     convergence. In order to make this process faster, it can evaluate this
     sequence of models in parallel.
 Version: 0.1
-Depends:
+Imports:
     lme4,
     parallel
 Collate:
-    'lmer.slimr.R'
     'convenience.R'
+    'lmer.slimr.R'
     'lmer.util.R'
+    'package.R'
     'ranef.manip.R'
