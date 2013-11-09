@@ -1,6 +1,8 @@
 get.terms <- function(x) {
   ## returns the terms of a single random effect specification
-  stopifnot(x[[1]] == "|")
+  if (x[[1]] != "|") {
+    stop("Variable passed to get.terms() is not a random-effect specification.")
+  }
   lhs <- x[[2]]
   group <- x[[3]]
   lhs.as.terms <- terms(formula(paste("~", deparse(lhs))))

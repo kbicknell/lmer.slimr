@@ -3,7 +3,9 @@
 #'
 #' @export
 ct <- function(x) {
-  stopifnot(is.numeric(x))
+  if (!is.numeric(x)) {
+    stop("Variable passed to ct() is not numeric.")
+  }
   scale(x, scale=F)
 }
 
@@ -11,9 +13,18 @@ ct <- function(x) {
 #'
 #' @export
 dc <- function(x) {
-  stopifnot(is.factor(x))
-  stopifnot(length(levels(x)) == 2)
-  return(as.numeric(x) - 1.5)
+  if (is.factor(x)) {
+    if (length(levels(x)) < 2) {
+      stop("Variable passed to dc() has fewer than 2 levels.")
+    } else if (length(levels(x)) > 2) {
+      stop("Variable passed to dc() has more than 2 levels.")
+    }
+    return(as.numeric(x) - 1.5)
+  } else if (is.logical(x)) {
+    return(as.numeric(x) - 0.5)
+  } else {
+    stop("Variable passed to dc() is neither a factor nor logical.")
+  }
 }
 
 #' to recode categorical variables. just does successive differences coding
@@ -27,7 +38,9 @@ dc <- function(x) {
 #' @importFrom MASS contr.sdif
 #' @export
 sdif.split <- function(x, label="") {
-  stopifnot(is.factor(x))
+  if (!is.factor(x)) {
+    stop("Variable passed to sdif.split() is not a factor.")
+  }
   levs <- levels(x)
   n <- length(levs)
   cmat <- contr.sdif(n)

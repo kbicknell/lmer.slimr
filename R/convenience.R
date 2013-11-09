@@ -1,5 +1,7 @@
 insert <- function(x, pos, item) {
-  stopifnot(length(x) >= (pos-1))
+  if (length(x) < (pos-1)) {
+    stop("'x' is not long enough to have 'item' inserted as position 'pos'")
+  }
   first.bit <- x[1:pos-1]
   if (length(x) == (pos-1)) {
     return(c(first.bit, item))
