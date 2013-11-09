@@ -1,0 +1,24 @@
+\name{sdif.split}
+\alias{sdif.split}
+\title{to recode categorical variables. just does successive differences coding
+(like contr.sdif), but is coded as continuous and split into multiple
+factors, which is useful to remove random correlations from lmer models. This
+is equivalent to deviation coding (-.5, .5) for binary contrasts. Input
+should be coded as a factor(). Returns a data.frame to be cbind'ed to the
+dataframe that x is in. The '.' in the column names should be interpreted as
+a "minus".}
+\usage{
+  sdif.split(x, label = "")
+}
+\description{
+  to recode categorical variables. just does successive
+  differences coding (like contr.sdif), but is coded as
+  continuous and split into multiple factors, which is
+  useful to remove random correlations from lmer models.
+  This is equivalent to deviation coding (-.5, .5) for
+  binary contrasts. Input should be coded as a factor().
+  Returns a data.frame to be cbind'ed to the dataframe that
+  x is in. The '.' in the column names should be
+  interpreted as a "minus".
+}
+

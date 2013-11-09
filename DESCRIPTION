@@ -20,3 +20,4 @@ Collate:
     'lmer.util.R'
     'package.R'
     'ranef.manip.R'
+    'variable.manip.R'
