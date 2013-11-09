@@ -5,28 +5,16 @@ library(lme4)
 #' correlations and return the first one to converge.
 #'
 #' @export
-lmer.slimr <- function(formula, data, family, parallel, ...) {
-  mf <- match.call() # acrobatics to recover ... and names of data, etc.
-
-  num.proper.args <- 4 # formula, data, family, parallel
-  ## we need to grab all the ... arguments to pass them along to (g)lmer. The
-  ## function call is mf[[1]], and there are num.proper.args proper arguments,
-  ## so the ... arguments start at 1+num.proper.args+1
-  first.ellipsis.arg <- num.proper.args + 2
-  if (first.ellipsis.arg <= length(mf)) {
-    ellipsis.args <- mf[seq(first.ellipsis.arg, length(mf))]
-  } else {
-    ellipsis.args <- list()
-  }
-
+lmer.slimr <- function(formula, data, family,
+                       parallel=1, show.warnings=F, ...) {
+  matched.call <- match.call() # acrobatics to recover ..., names of data, etc.
   env <- parent.frame()
-  formula <- formula(formula)
+  ellipsis.args <- get.ellipsis.args(formals(), matched.call)
+
   possible.steps <- get.all.steps(formula, data)
-  current.step <- 1
+  num.steps <- length(possible.steps)
   next.to.start <- 1
-  if (parallel > length(possible.steps)) {
-    parallel <- length(possible.steps)
-  }
+  parallel <- min(parallel, num.steps)
 
   ## initialize first batch of jobs
   jobs <- list()
@@ -36,17 +24,29 @@ lmer.slimr <- function(formula, data, family, parallel, ...) {
     ## use lmer.slimr:::
     call.base <- list(quote(lmer.slimr:::lmer.check.convergence),
                       formula=possible.steps[[next.to.start]],
-                      data=mf$data)
-    lmer.call <- as.call(c(call.base, ellipsis.args))
+                      data=matched.call$data, family=family)
+    lcc.call <- as.call(c(call.base, ellipsis.args))
 
-    jobs[[next.to.start]] <- mcparallel(eval(lmer.call, env))
-    next.to.start <- next.to.start+1
+    jobs[[next.to.start]] <- mcparallel(eval(lcc.call, env))
+    next.to.start <- next.to.start + 1
   }
 
   ## iteratively look at results
-  for (i in seq(length(possible.steps))) {
+  for (i in seq_len(num.steps)) {
     result <- mccollect(jobs[[i]])[[1]]
-    if (!(identical(result, F))) {
+    if (is.list(result)) { # returned warning or error
+      if ("error" %in% class(result)) { # returned error
+        stop(result)
+      }
+      if (show.warnings) {
+        warning(result)
+      }
+      if (next.to.start <= num.steps) {
+        lcc.call$formula <- possible.steps[[next.to.start]]
+        jobs[[next.to.start]] <- mcparallel(eval(lcc.call, env))
+        next.to.start <- next.to.start + 1
+      }
+    } else { # it converged
       output.convergence.info(i, possible.steps[[i]])
       if (next.to.start-1 > i) {
         for (j in seq(i+1, next.to.start-1)) {
@@ -54,10 +54,6 @@ lmer.slimr <- function(formula, data, family, parallel, ...) {
         }
       }
       return(result)
-    } else if (next.to.start <= length(possible.steps)) {
-      lmer.call$formula <- possible.steps[[next.to.start]]
-      jobs[[next.to.start]] <- mcparallel(eval(lmer.call, env))
-      next.to.start <- next.to.start + 1
     }
   }
 
@@ -69,14 +65,14 @@ lmer.slimr <- function(formula, data, family, parallel, ...) {
 # slmer <- function(formula, ...) {
 #   ### this function just calls lmer.slimr with parallel=1
 #   ## acrobatics to recover ... and formula
-#   mf <- match.call() # acrobatics to recover ... and formula
-#   mf[[1]] <- quote(lmer.slimr)
-#   oldlength <- length(mf)
+#   matched.call <- match.call() # acrobatics to recover ... and formula
+#   matched.call[[1]] <- quote(lmer.slimr)
+#   oldlength <- length(matched.call)
 #   newlength <- oldlength+1
-#   mf[4:newlength] <- mf[3:oldlength]
-#   names(mf)[4:newlength] <- names(mf)[3:oldlength]
-#   mf[[3]] <- 1
-#   names(mf)[3] <- "parallel"
+#   matched.call[4:newlength] <- matched.call[3:oldlength]
+#   names(matched.call)[4:newlength] <- names(matched.call)[3:oldlength]
+#   matched.call[[3]] <- 1
+#   names(matched.call)[3] <- "parallel"
 #   env <- parent.frame()
-#   eval(mf, env)
+#   eval(matched.call, env)
 # }

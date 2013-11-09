@@ -16,6 +16,9 @@ build.ranef.string <- function(terms, group) {
 }
 
 get.all.steps <- function(f, df) {
+  if (class(f) != "formula") {
+    f <- formula(f)
+  }
   f.prime <- drop.corr.from.lmer.formula(f, df)
   if (f.prime == F) {
     return(list(f))

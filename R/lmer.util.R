@@ -1,17 +1,30 @@
-lmer.check.convergence <- function(...) {
+#' Returns a (g)lmer model if it converges, and a warning or error otherwise
+lmer.check.convergence <- function(formula, data, family="gaussian", ...) {
   ## We have to do acrobatics to see the evaluated ... in the model output
-  mf <- match.call()
-  mf[[1]] <- quote(lmer)
+  matched.call <- match.call()
   env <- parent.frame()
-  mf[[2]] <- eval(mf[[2]], env) # eval formula
-  op <- options(warn=2)
-  on.exit(options(op))
-  m <- try(eval(mf, env), silent=T)
-  if (inherits(m, "try-error")) {
-    return(F)
+  ellipsis.args <- get.ellipsis.args(formals(), matched.call)
+
+  if (family == "gaussian") {
+    call.base <- list(quote(lmer),
+                      formula=matched.call$formula,
+                      data=matched.call$data)
   } else {
-    return(m)
+    call.base <- list(quote(glmer),
+                      formula=matched.call$formula,
+                      data=matched.call$data,
+                      family=family)
   }
+  lmer.call <- as.call(c(call.base, ellipsis.args))
+
+  m <- tryCatch({
+    eval(lmer.call, env)
+  }, warning = function(w) {
+    return(w)
+  }, error = function(e) {
+    return(e)
+  })
+  return(m)
 }
 
 output.convergence.info <- function(return.step, formula) {
