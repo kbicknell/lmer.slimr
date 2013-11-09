@@ -6,7 +6,8 @@ library(lme4)
 #'
 #' @export
 lmer.slimr <- function(formula, data,
-                       parallel=1, show.warnings=F, ...) {
+                       parallel=getOption("mc.cores", 2L),
+                       show.warnings=F, ...) {
   matched.call <- match.call()
   env <- parent.frame()
   if ("family" %in% names(matched.call)) {
@@ -22,7 +23,8 @@ lmer.slimr <- function(formula, data,
 #'
 #' @export
 glmer.slimr <- function(formula, data, family,
-                        parallel=1, show.warnings=F, ...) {
+                        parallel=getOption("mc.cores", 2L),
+                        show.warnings=F, ...) {
   if (missing(family)) {
     stop("glmer.slimr requires that 'family' be specified. ",
          "Use lmer.slimr for linear models.")
@@ -34,7 +36,8 @@ glmer.slimr <- function(formula, data, family,
 }
 
 lmer.slimr.core <- function(formula, data, family="gaussian",
-                            parallel=1, show.warnings=F, ...) {
+                            parallel=getOption("mc.cores", 2L),
+                            show.warnings=F, ...) {
   matched.call <- match.call() # acrobatics to recover ..., names of data, etc.
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
