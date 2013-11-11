@@ -81,10 +81,14 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
         next.to.start <- next.to.start + 1
       }
     } else { # it converged
-      output.convergence.info(i, possible.steps[[i]])
-      if (next.to.start-1 > i) {
-        for (j in seq(i+1, next.to.start-1)) {
-          tools::pskill(jobs[[j]]$pid)
+      if (simplest.only) {
+        message("Simplest model converged.")
+      } else {
+        output.convergence.info(i, possible.steps[[i]])
+        if (next.to.start-1 > i) {
+          for (j in seq(i+1, next.to.start-1)) {
+            tools::pskill(jobs[[j]]$pid)
+          }
         }
       }
       return(result)
