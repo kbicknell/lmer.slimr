@@ -42,7 +42,10 @@ can.reparam <- function(term, df) {
   return(F)
 }
 
-#' @importFrom lme4 nobars findbars
+## I commented out the following line because nobars and findbars are not
+#exported in the older lme4. One I switch to the new lme4, I should add this
+#back and switch the ::: to ::
+# ' @importFrom lme4 nobars findbars
 drop.corr.from.lmer.formula <- function(f, df) {
   ## drops a single row out of the correlation matrix of a mixed-effects
   ## regression model formula
