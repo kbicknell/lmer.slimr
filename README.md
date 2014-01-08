@@ -13,3 +13,9 @@ In particular, `lmer.slimr`:
 
  * In the case where this model doesn't converge, removes random
    correlations until it find a model that converges.
+
+The easiest way to install is to run
+
+    install_github('kbicknell/lmer.slimr')
+
+after loading the `devtools` library.
