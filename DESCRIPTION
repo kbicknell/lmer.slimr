@@ -4,13 +4,14 @@ License: GPL (>=2)
 Title: Slim down (g)lmer models by removing random correlations until
     convergence.
 Type: Package
-Author: Klinton Bicknell <kbicknell@gmail.com>
+Author: Klinton Bicknell <kbicknell@northwestern.edu>
 Description: Often (g)lmer models (from the lme4 package) with a large number of
     random correlations to estimate will fail to converge. lmer.slimr provides
     functions that iteratively simplify the random correlation matrix until
     convergence. In order to make this process faster, it can evaluate this
     sequence of models in parallel.
-Version: 0.1
+Version: 0.2
 Imports:
     lme4,
-    parallel
+    parallel,
+    MASS
