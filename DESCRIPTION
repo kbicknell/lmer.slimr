@@ -1,5 +1,5 @@
 Package: lmer.slimr
-Maintainer: Klinton Bicknell <kbicknell@gmail.com>
+Maintainer: Klinton Bicknell <kbicknell@northwestern.edu>
 License: GPL (>=2)
 Title: Slim down (g)lmer models by removing random correlations until
     convergence.
@@ -14,10 +14,3 @@ Version: 0.1
 Imports:
     lme4,
     parallel
-Collate:
-    'convenience.R'
-    'lmer.slimr.R'
-    'lmer.util.R'
-    'package.R'
-    'ranef.manip.R'
-    'variable.manip.R'

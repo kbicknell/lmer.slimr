@@ -5,7 +5,7 @@ get.terms <- function(x) {
   }
   lhs <- x[[2]]
   group <- x[[3]]
-  lhs.as.terms <- terms(formula(paste("~", deparse(lhs))))
+  lhs.as.terms <- terms(formula(paste("~", safe.deparse(lhs))))
   intercept <- attr(lhs.as.terms, "intercept")
   terms <- attr(lhs.as.terms, "term.labels")
   terms <- c(intercept, terms)
@@ -95,5 +95,5 @@ drop.corr.from.lmer.formula <- function(f, df) {
   terms <- sapply(terms.list,
                   function(x) {build.ranef.string(x$terms, x$group)})
   ranef.string <- paste(terms, collapse="+")
-  formula(paste(deparse(fixedefs), ranef.string,sep="+"))
+  formula(paste(safe.deparse(fixedefs), ranef.string,sep="+"))
 }

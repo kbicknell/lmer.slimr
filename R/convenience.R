@@ -25,3 +25,7 @@ get.ellipsis.args <- function(formals, matched.call) {
   }
   return(ellipsis.args)
 }
+
+safe.deparse <- function(x) {
+  paste(deparse(x), collapse=" ")
+}
