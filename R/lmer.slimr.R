@@ -68,17 +68,22 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
   ## iteratively look at results
   for (i in seq_len(num.steps)) {
     result <- parallel::mccollect(jobs[[i]])[[1]]
-    if (is.list(result)) { # returned warning or error
-      if ("error" %in% class(result)) { # returned error
-        stop(result)
+    success.feedback <- result[[1]]
+    model <- result[[2]]
+    if (is.list(success.feedback)) { # returned warning or error
+      if ("error" %in% class(success.feedback)) { # returned error
+        stop(success.feedback)
       }
       if (!suppress.warnings) {
-        warning(result)
+        warning(success.feedback)
       }
       if (next.to.start <= num.steps) {
         lcc.call$formula <- possible.steps[[next.to.start]]
         jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
         next.to.start <- next.to.start + 1
+      } else { # last step
+        message("Simplest model failed to converge. Returning (unconverged) simplest model.")
+        return(model)
       }
     } else { # it converged
       if (simplest.only) {
@@ -91,12 +96,9 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
           }
         }
       }
-      return(result)
+      return(model)
     }
   }
-
-  message("No models converged.")
-  return(F)
 }
 
 # #' @export

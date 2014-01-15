@@ -22,11 +22,11 @@ lmer.check.convergence <- function(formula, data, family="gaussian", ...) {
   m <- tryCatch({
     eval(lmer.call, env)
   }, warning = function(w) {
-    return(w)
+    return(list(w, m))
   }, error = function(e) {
-    return(e)
+    return(list(e, m))
   })
-  return(m)
+  return(list(T, m))
 }
 
 output.convergence.info <- function(return.step, formula) {
