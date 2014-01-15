@@ -68,24 +68,16 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
   ## iteratively look at results
   for (i in seq_len(num.steps)) {
     result <- parallel::mccollect(jobs[[i]])[[1]]
-    success.feedback <- result[[1]]
-    model <- result[[2]]
-    if (is.list(success.feedback)) { # returned warning or error
-      if ("error" %in% class(success.feedback)) { # returned error
-        stop(success.feedback)
-      }
-      if (!suppress.warnings) {
-        warning(success.feedback)
-      }
-      if (next.to.start <= num.steps) {
-        lcc.call$formula <- possible.steps[[next.to.start]]
-        jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
-        next.to.start <- next.to.start + 1
-      } else { # last step
-        message("Simplest model failed to converge. Returning (unconverged) simplest model.")
-        return(model)
-      }
-    } else { # it converged
+
+    if ("error" %in% class(result)) {
+      stop(result)
+    }
+
+    ## if not an error, then is a list, possibly containing warnings
+    model <- result$value
+    warnings <- result$warnings
+
+    if (is.null(warnings)) { ## no warnings
       if (simplest.only) {
         message("Simplest model converged.")
       } else {
@@ -97,6 +89,20 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
         }
       }
       return(model)
+    } else { # returned warning(s)
+      if (!suppress.warnings) {
+        for (w in warnings) {
+          warning(w)
+        }
+      }
+      if (next.to.start <= num.steps) {
+        lcc.call$formula <- possible.steps[[next.to.start]]
+        jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
+        next.to.start <- next.to.start + 1
+      } else { # last step
+        message("Simplest model failed to converge. Returning (unconverged) simplest model.")
+        return(model)
+      }
     }
   }
 }

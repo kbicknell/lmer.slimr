@@ -20,13 +20,11 @@ lmer.check.convergence <- function(formula, data, family="gaussian", ...) {
   lmer.call <- as.call(c(call.base, ellipsis.args))
 
   m <- tryCatch({
-    eval(lmer.call, env)
-  }, warning = function(w) {
-    return(list(w, m))
+    withWarnings(eval(lmer.call, env))
   }, error = function(e) {
-    return(list(e, m))
+    return(e)
   })
-  return(list(T, m))
+  return(m)
 }
 
 output.convergence.info <- function(return.step, formula) {
@@ -36,4 +34,14 @@ output.convergence.info <- function(return.step, formula) {
     message(paste("Full model did not converge. Had to change formula by",
                   return.step-1, "steps."))
   }
+}
+
+withWarnings <- function(expr) {
+  myWarnings <- NULL
+  wHandler <- function(w) {
+    myWarnings <<- c(myWarnings, list(w))
+    invokeRestart("muffleWarning")
+  }
+  val <- withCallingHandlers(expr, warning = wHandler)
+  list(value = val, warnings = myWarnings)
 }
