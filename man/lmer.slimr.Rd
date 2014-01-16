@@ -6,7 +6,8 @@
 correlations and return the first one to converge.}
 \usage{
 lmer.slimr(formula, data, parallel = getOption("mc.cores", 2L),
-  suppress.warnings = F, simplest.only = F, ...)
+  suppress.warnings = F, simplest.only = F, return.only.converged = F,
+  ...)
 }
 \description{
 Evaluate sequence of lmer models with a decreasing number

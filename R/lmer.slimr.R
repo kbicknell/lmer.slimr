@@ -4,7 +4,8 @@
 #' @export
 lmer.slimr <- function(formula, data,
                        parallel=getOption("mc.cores", 2L),
-                       suppress.warnings=F, simplest.only=F, ...) {
+                       suppress.warnings=F, simplest.only=F,
+                       return.only.converged=F, ...) {
   matched.call <- match.call()
   env <- parent.frame()
   if ("family" %in% names(matched.call)) {
@@ -21,7 +22,8 @@ lmer.slimr <- function(formula, data,
 #' @export
 glmer.slimr <- function(formula, data, family,
                         parallel=getOption("mc.cores", 2L),
-                        suppress.warnings=F, simplest.only=F, ...) {
+                        suppress.warnings=F, simplest.only=F,
+                        return.only.converged=F, ...) {
   if (missing(family)) {
     stop("glmer.slimr requires that 'family' be specified. ",
          "Use lmer.slimr for linear models.")
@@ -36,7 +38,8 @@ glmer.slimr <- function(formula, data, family,
 #' @importFrom tools pskill
 lmer.slimr.core <- function(formula, data, family="gaussian",
                             parallel=getOption("mc.cores", 2L),
-                            suppress.warnings=F, simplest.only=F, ...) {
+                            suppress.warnings=F, simplest.only=F,
+                            return.only.converged=F, ...) {
   matched.call <- match.call() # acrobatics to recover ..., names of data, etc.
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
@@ -100,8 +103,13 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
         jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
         next.to.start <- next.to.start + 1
       } else { # last step
-        message("Simplest model failed to converge. Returning (unconverged) simplest model.")
-        return(model)
+        if (return.only.converged) {
+          message("Simplest model failed to converge, and return.only.converged==T.")
+          return("Simplest model failed to converge, and return.only.converged==T.")
+        } else {
+          message("Simplest model failed to converge. Returning (unconverged) simplest model.")
+          return(model)
+        }
       }
     }
   }
