@@ -10,7 +10,7 @@ Description: Often (g)lmer models (from the lme4 package) with a large number of
     functions that iteratively simplify the random correlation matrix until
     convergence. In order to make this process faster, it can evaluate this
     sequence of models in parallel.
-Version: 0.3
+Version: 0.31
 Imports:
     lme4,
     parallel,

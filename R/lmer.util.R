@@ -8,7 +8,6 @@ lmer.check.convergence <- function(formula, data, family="gaussian",
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
   if (use.old.lme4) {
-    try_require("lme4.0")
     if (family == "gaussian") {
       lme4.command <- quote(lme4.0::lmer)
     } else {

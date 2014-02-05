@@ -47,6 +47,10 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
 
+  # make sure we have lme4.0 (if requested) before starting parallel models
+  if (use.old.lme4) {
+    try_require("lme4.0")
+  }
   possible.steps <- get.all.steps(formula, data)
   if (simplest.only) {
     possible.steps <- possible.steps[length(possible.steps)]
