@@ -2,7 +2,8 @@
 \alias{lmer.check.convergence}
 \title{Returns a (g)lmer model if it converges, and a warning or error otherwise}
 \usage{
-lmer.check.convergence(formula, data, family = "gaussian", ...)
+lmer.check.convergence(formula, data, family = "gaussian", use.old.lme4 = F,
+  ...)
 }
 \description{
 Returns a (g)lmer model if it converges, and a warning or

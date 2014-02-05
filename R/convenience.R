@@ -29,3 +29,17 @@ get.ellipsis.args <- function(formals, matched.call) {
 safe.deparse <- function(x) {
   paste(deparse(x), collapse=" ")
 }
+
+# Quietly try to require a package
+# Queitly require a package, returning an error message if that package is not installed.
+# I lifted this from Hadley Wickham's ggplot2.
+#
+# @param name of package
+# @keyword internal
+try_require <- function(package) {
+  available <- suppressMessages(suppressWarnings(sapply(package, require, quietly = TRUE, character.only = TRUE, warn.conflicts=FALSE)))
+  missing <- package[!available]
+
+  if (length(missing) > 0)
+    stop(paste(package, collapse=", "), " package required for this functionality.  Please install and try again.", call. = FALSE)
+}

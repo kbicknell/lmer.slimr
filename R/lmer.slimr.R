@@ -5,7 +5,8 @@
 lmer.slimr <- function(formula, data,
                        parallel=getOption("mc.cores", 2L),
                        suppress.warnings=F, simplest.only=F,
-                       return.only.converged=F, ...) {
+                       return.only.converged=F,
+                       use.old.lme4=F, ...) {
   matched.call <- match.call()
   env <- parent.frame()
   if ("family" %in% names(matched.call)) {
@@ -23,7 +24,8 @@ lmer.slimr <- function(formula, data,
 glmer.slimr <- function(formula, data, family,
                         parallel=getOption("mc.cores", 2L),
                         suppress.warnings=F, simplest.only=F,
-                        return.only.converged=F, ...) {
+                        return.only.converged=F,
+                        use.old.lme4=F, ...) {
   if (missing(family)) {
     stop("glmer.slimr requires that 'family' be specified. ",
          "Use lmer.slimr for linear models.")
@@ -39,7 +41,8 @@ glmer.slimr <- function(formula, data, family,
 lmer.slimr.core <- function(formula, data, family="gaussian",
                             parallel=getOption("mc.cores", 2L),
                             suppress.warnings=F, simplest.only=F,
-                            return.only.converged=F, ...) {
+                            return.only.converged=F,
+                            use.old.lme4=F, ...) {
   matched.call <- match.call() # acrobatics to recover ..., names of data, etc.
   env <- parent.frame()
   ellipsis.args <- get.ellipsis.args(formals(), matched.call)
@@ -57,7 +60,8 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
   ## use lmer.slimr:::
   call.base <- list(quote(lmer.slimr:::lmer.check.convergence),
                     formula=possible.steps[[1]],
-                    data=matched.call$data, family=family)
+                    data=matched.call$data, family=family,
+                    use.old.lme4=use.old.lme4)
   lcc.call <- as.call(c(call.base, ellipsis.args))
 
   ## initialize first batch of jobs
@@ -114,19 +118,3 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
     }
   }
 }
-
-# #' @export
-# slmer <- function(formula, ...) {
-#   ### this function just calls lmer.slimr with parallel=1
-#   ## acrobatics to recover ... and formula
-#   matched.call <- match.call() # acrobatics to recover ... and formula
-#   matched.call[[1]] <- quote(lmer.slimr)
-#   oldlength <- length(matched.call)
-#   newlength <- oldlength+1
-#   matched.call[4:newlength] <- matched.call[3:oldlength]
-#   names(matched.call)[4:newlength] <- names(matched.call)[3:oldlength]
-#   matched.call[[3]] <- 1
-#   names(matched.call)[3] <- "parallel"
-#   env <- parent.frame()
-#   eval(matched.call, env)
-# }

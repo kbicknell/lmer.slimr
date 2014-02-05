@@ -19,3 +19,8 @@ The easiest way to install is to run
     install_github('kbicknell/lmer.slimr')
 
 after loading the `devtools` library.
+
+If you want to take advantage of the functionality to use the old
+version of `lme4` (`lme4.0`), you'll need to install that first like so:
+
+    install.packages("lme4.0", repos = c("http://lme4.r-forge.r-project.org/repos", getOption("repos")))

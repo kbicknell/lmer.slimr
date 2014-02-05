@@ -42,15 +42,12 @@ can.reparam <- function(term, df) {
   return(F)
 }
 
-## I commented out the following line because nobars and findbars are not
-#exported in the older lme4. One I switch to the new lme4, I should add this
-#back and switch the ::: to ::
-# ' @importFrom lme4 nobars findbars
+#' @importFrom lme4 nobars findbars
 drop.corr.from.lmer.formula <- function(f, df) {
   ## drops a single row out of the correlation matrix of a mixed-effects
   ## regression model formula
-  fixedefs <- lme4:::nobars(f)
-  ranefs <- lme4:::findbars(f)
+  fixedefs <- lme4::nobars(f)
+  ranefs <- lme4::findbars(f)
   terms.list <- lapply(ranefs, get.terms)
   num.terms <- sapply(terms.list, function(x) {length(x$terms)})
   highest <- max(num.terms)
