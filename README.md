@@ -16,9 +16,9 @@ In particular, `lmer.slimr`:
 
 The easiest way to install is to run
 
-    install_github('kbicknell/lmer.slimr')
+    devtools::install_github('kbicknell/lmer.slimr')
 
-after loading the `devtools` library.
+after installing the `devtools` package.
 
 If you want to take advantage of the functionality to use the old
 version of `lme4` (`lme4.0`), you'll need to install that first like so:
