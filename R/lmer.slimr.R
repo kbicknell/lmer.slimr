@@ -110,7 +110,7 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
         lcc.call$formula <- possible.steps[[next.to.start]]
         jobs[[next.to.start]] <- parallel::mcparallel(eval(lcc.call, env))
         next.to.start <- next.to.start + 1
-      } else { # last step
+      } else if (i==num.steps) { # last step
         if (return.only.converged) {
           message("Simplest model failed to converge, and return.only.converged==T.")
           return("Simplest model failed to converge, and return.only.converged==T.")
