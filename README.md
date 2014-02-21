@@ -29,4 +29,4 @@ like so:
 
 If you're on a mac and loading `lme4.0` complains about gfortran,
 you'll need to install the
-[mac gfortran package](cran.r-project.org/bin/macosx/tools/).
+[mac gfortran package](http://cran.r-project.org/bin/macosx/tools/).
