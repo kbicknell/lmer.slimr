@@ -16,16 +16,18 @@ In particular, `lmer.slimr`:
 
 ## installation
 
-The easiest way to install is to first install the `devtools` package, and then run
+The easiest way to install is to first install the `devtools` package,
+and then run
 
     devtools::install_github('kbicknell/lmer.slimr')
 
 If you want to take advantage of the functionality to use the old
-version of `lme4` (`lme4.0`), you'll need to install that first like so:
+version of `lme4` (i.e., `lme4.0`), you'll need to install that first
+like so:
 
     install.packages("lme4.0", repos = c("http://lme4.r-forge.r-project.org/repos", getOption("repos")))
 
-If loading `lme4.0` complains about gfortran, you'll need to
-install the gfortran package from here:
+If loading `lme4.0` complains about gfortran, you'll need to install
+the gfortran package from here:
 
 	cran.r-project.org/bin/macosx/tools/
