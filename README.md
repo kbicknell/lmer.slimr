@@ -27,7 +27,6 @@ like so:
 
     install.packages("lme4.0", repos = c("http://lme4.r-forge.r-project.org/repos", getOption("repos")))
 
-If loading `lme4.0` complains about gfortran, you'll need to install
-the gfortran package from here:
-
-	cran.r-project.org/bin/macosx/tools/
+If you're on a mac and loading `lme4.0` complains about gfortran,
+you'll need to install the
+[mac gfortran package](cran.r-project.org/bin/macosx/tools/).
