@@ -44,6 +44,8 @@ can.reparam <- function(term, df) {
 
 #' @importFrom lme4 nobars findbars
 drop.corr.from.lmer.formula <- function(f, df) {
+  env <- environment(f) # save environment to re-apply it to new formula
+  
   ## drops a single row out of the correlation matrix of a mixed-effects
   ## regression model formula
   fixedefs <- lme4::nobars(f)
@@ -92,5 +94,7 @@ drop.corr.from.lmer.formula <- function(f, df) {
   terms <- sapply(terms.list,
                   function(x) {build.ranef.string(x$terms, x$group)})
   ranef.string <- paste(terms, collapse="+")
-  formula(paste(safe.deparse(fixedefs), ranef.string,sep="+"))
+  f <- formula(paste(safe.deparse(fixedefs), ranef.string,sep="+"))
+  environment(f) <- env
+  return(f)
 }
