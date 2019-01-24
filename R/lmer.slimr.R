@@ -36,6 +36,16 @@ glmer.slimr <- function(formula, data, family,
   eval(matched.call, env)
 }
 
+#' returns TRUE if model converged without warnings and FALSE otherwise
+get_lmer_convergence <- function(m) {
+  number_conv_warnings <- length(m@optinfo$conv$lme4)
+  if (number_conv_warnings == 0) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+
 #' @importFrom parallel mcparallel mccollect
 #' @importFrom tools pskill
 lmer.slimr.core <- function(formula, data, family="gaussian",
@@ -88,7 +98,7 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
     model <- result$value
     warnings <- result$warnings
 
-    if (is.null(warnings)) { ## no warnings
+    if (is.null(warnings) && get_lmer_convergence(model)) { ## no warnings
       if (simplest.only) {
         message("Simplest model converged.")
       } else {
@@ -104,6 +114,9 @@ lmer.slimr.core <- function(formula, data, family="gaussian",
       if (!suppress.warnings) {
         for (w in warnings) {
           warning(w)
+        }
+        for (m in model@optinfo$conv$lme4$messages) {
+          message(m)
         }
       }
       if (next.to.start <= num.steps) {
