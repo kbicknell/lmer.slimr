@@ -17,3 +17,4 @@ Imports:
     MASS
 Suggests:
     lme4.0
+RoxygenNote: 6.1.1
